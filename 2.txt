@@ -1,0 +1,23 @@
+!pip -q install spacy scikit-learn matplotlib numpy
+import spacy, numpy as np, matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+nlp = spacy.load("en_core_web_md")
+
+words = ["computer","internet","software","hardware","network","AI","cloud","cybersecurity","database","robotics"]
+
+vec = np.array([nlp(w).vector for w in words])
+pca = PCA(n_components=2).fit_transform(vec)
+
+plt.figure(figsize=(10,6))
+plt.scatter(pca[:,0], pca[:,1])
+
+for i,w in enumerate(words):
+    plt.annotate(w,(pca[i,0],pca[i,1]),
+    bbox=dict(facecolor='white',alpha=0.7))
+
+plt.title("PCA Visualization of Word Embeddings")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.grid(True)
+plt.show()
