@@ -1,0 +1,18 @@
+!pip -q install gensim
+
+import gensim.downloader as api
+
+m = api.load("word2vec-google-news-300")
+
+print("Similarity:", m.similarity("king","queen"))
+print("King-Man+Woman =", m.most_similar(
+    positive=["king","woman"],
+    negative=["man"],
+    topn=1)[0][0])
+
+print("Similar to Paris:")
+for w,s in m.most_similar("Paris", topn=5):
+    print(w, round(s,4))
+
+print("Odd one out:",
+      m.doesnt_match(["breakfast","lunch","dinner","banana"]))
