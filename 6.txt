@@ -1,0 +1,15 @@
+!pip -q install transformers torch
+
+from transformers import pipeline
+
+sentiment = pipeline("sentiment-analysis")
+
+while True:
+    text = input("Enter a sentence (or 'exit' to quit): ")
+
+    if text.lower() == "exit":
+        break
+
+    r = sentiment(text)[0]
+
+    print(f"Sentiment: {r['label']} (Confidence: {r['score']:.2f})\n")
