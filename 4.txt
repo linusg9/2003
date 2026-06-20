@@ -1,0 +1,26 @@
+!pip -q install gensim transformers torch
+
+import gensim.downloader as api
+from transformers import pipeline
+
+w=api.load("glove-wiki-gigaword-100")
+g=pipeline("text-generation",model="gpt2")
+
+def enrich(p):
+    return " ".join([x for i in p.split()
+    for x in ([i]+[j[0] for j in w.most_similar(i,topn=2)] if i in w else [i])])
+
+p="Explain machine learning in healthcare"
+ep=enrich(p)
+
+o1=g(p,max_length=100)[0]["generated_text"]
+o2=g(ep,max_length=100)[0]["generated_text"]
+
+print("Original Prompt:",p)
+print("Enriched Prompt:",ep)
+print("Output (Original):",o1)
+print("Output (Enriched):",o2)
+
+print("Comparison:")
+print("Original length:",len(o1.split()))
+print("Enriched length:",len(o2.split()))
