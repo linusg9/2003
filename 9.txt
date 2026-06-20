@@ -1,0 +1,45 @@
+import wikipediaapi
+from pydantic import BaseModel
+from typing import Optional, List
+import ipywidgets as w
+from IPython.display import display
+
+# Install compatible versions
+!pip -q install wikipedia-api pydantic ipywidgets
+
+class Institution(BaseModel):
+    founder: Optional[str]
+    founded: Optional[str]
+    branches: Optional[List[str]]
+    employees: Optional[int]
+    summary: Optional[str]
+
+def fetch(name):
+    # Changed user_agent to a more descriptive string
+    wiki = wikipediaapi.Wikipedia(user_agent="MyColabApp/1.0 (your_email@example.com)", language="en")
+    p = wiki.page(name)
+
+    if not p.exists():
+        print("Page not found")
+        return
+
+    d = Institution(
+        founder=None,
+        founded=None,
+        branches=None,
+        employees=None,
+        summary=p.summary[:500]
+    )
+
+    print("Founder:", d.founder or "N/A")
+    print("Founded:", d.founded or "N/A")
+    print("Branches:", d.branches or "N/A")
+    print("Number of Employees:", d.employees or "N/A")
+    print("Summary:", d.summary)
+
+t = w.Text(description="Institution:")
+b = w.Button(description="Fetch Details")
+
+b.on_click(lambda x: fetch(t.value))
+
+display(t, b)
